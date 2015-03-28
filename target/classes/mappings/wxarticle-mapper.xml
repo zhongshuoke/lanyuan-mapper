@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxArticleMapper">
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		weixin_no as wxAccountNo,
+        title,
+		publish_date as publishTime,
+		create_date as captureTime,
+		url as sourceUrl
+	</sql>
+	
+	<sql id="selectContentId">
+		id,
+		weixin_no as wxAccountNo,
+        title,
+        content,
+		publish_date as publishTime,
+		create_date as captureTime,
+		url as sourceUrl
+	</sql>
+
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle
+		<where>
+			<if test="wxAccountNo != null and wxAccountNo != ''">
+				weixin_no like '%${wxAccountNo}%'
+			</if>
+		</where>
+		limit 20
+	</select>
+	
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->	
+	<select id="queryMoreWxArticleNoClassId" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle
+		<where>
+			<if test="keyword != null and keyword != ''">
+				title like '%${keyword}%'
+			</if>
+			<if test="max_article_id != null ">
+				<![CDATA[id <= #{max_article_id}]]>
+			</if>
+		</where>
+		order by publish_date desc,id desc
+		limit #{offset}, #{limit}
+	</select>
+	<select id="queryMoreWxArticleByClassId" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle w, wxaccount wa, wxacctype wt
+		<where>
+			w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id})
+			<if test="keyword != null and keyword != ''">
+				w.title like '%${keyword}%'
+			</if>
+			<if test="max_article_id != null ">
+				<![CDATA[w.id <= #{max_article_id}]]>
+			</if>
+		</where>
+		order by w.publish_date desc,w.id desc
+		limit #{offset}, #{limit}
+	</select>
+
+	<select id="isExist" resultType="WxArticle" parameterType="String">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle
+		where title = #{title}
+	</select>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="query" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle
+		<where>
+			<if test="t.title != null and t.title != ''">
+				title like '%${t.title}%'
+			</if>
+		</where>
+		order by publish_date desc,id desc
+	</select>
+
+	<select id="queryNoMatch" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		a.id,
+		a.weixin_no as wxAccountNo,
+		a.title,
+		a.publish_date as publishTime,
+		a.create_date as captureTime,
+		a.url as sourceUrl
+		from gather_weixinarticle a
+		<where>
+			<if test="a.title != null and a.title != ''">
+				title like '%${a.title}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="add" parameterType="WxArticle">
+		insert into gather_weixinarticle (
+		weixin_no,
+		title,
+		publish_date,
+		create_date,
+		url )
+		values (#{wxAccountNo},
+		#{title},
+		#{content}, 
+		#{publishTime},
+		#{captureTime},
+		#{sourceUrl})
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from gather_weixinarticle where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxArticle">
+		select
+		<include refid="selectContentId" />
+		from gather_weixinarticle where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxArticle">
+		update gather_weixinarticle
+		<set>
+			<if test="title != null and title != ''">
+				title=#{title},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 验证用户登陆 -->
+	<select id="countArticle" parameterType="WxArticle" resultType="WxArticle">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle where
+		weixin_no=#{wxAccountNo} and title=#{title}
+	</select>
+
+	<!-- 根据用户名查出id -->
+	<select id="querySingleArticle" parameterType="String"
+		resultType="WxArticle">
+		select id,content,url as sourceUrl
+		from gather_weixinarticle where title=#{title}
+	</select>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxScheduleMapper">
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		minute,
+        hour,
+		day_of_week,
+		day_of_month,
+		month_of_year
+	</sql>
+
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxSchedule" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule
+		<where>
+			<if test="hour != null and hour != ''">
+				hour like '%${hour}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="isExist" resultType="WxSchedule" parameterType="String">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule
+		where hour = #{hour}
+	</select>
+
+	<!--resultType="WxSchedule" 每返回一条结果封装到WxSchedule里 -->
+	<select id="query" resultType="WxSchedule" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule
+		<where>
+			<if test="t.hour != null and t.hour != ''">
+				hour like '%${t.hour}%'
+			</if>
+		</where>
+		order by hour asc
+	</select>
+
+	<select id="queryNoMatch" resultType="WxSchedule" parameterType="java.util.HashMap">
+		select
+        <include refid="selectId" />
+		<where>
+			<if test="a.hour != null and a.hour != ''">
+				hour like '%${a.hour}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="add" parameterType="WxSchedule">
+		insert into djcelery_crontabschedule (
+		minute,
+		hour,
+		day_of_week,
+		day_of_month,
+		month_of_year )
+		values (#{minute},
+		#{hour},
+		#{day_of_week}, 
+		#{day_of_month},
+		#{month_of_year})
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from djcelery_crontabschedule where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxSchedule">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxSchedule">
+		update djcelery_crontabschedule
+		<set>
+			<if test="hour != null and hour != ''">
+				hour=#{hour},
+			</if>
+			<if test="minute != null and minute != ''">
+				minute=#{minute},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 验证用户登陆 -->
+	<select id="countSchedule" parameterType="WxSchedule" resultType="WxSchedule">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule where
+		hour=#{hour} and minute=#{minute}
+	</select>
+
+	<!-- 根据用户名查出id -->
+	<select id="querySingleSchedule" parameterType="String"
+		resultType="WxSchedule">
+		select
+		<include refid="selectId" />
+		from djcelery_crontabschedule where hour=#{hour}
+	</select>
+</mapper>

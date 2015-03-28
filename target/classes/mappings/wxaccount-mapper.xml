@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxAccountMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		wxAccountName,
+        wxAccountNo,
+		wxType,
+		description,
+		state,
+		createTime
+	</sql>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxAccount" parameterType="WxAccount">
+		select
+		<include refid="selectId" />
+		from wxaccount
+		<where>
+			<if test="wxAccountName != null and wxAccountName != ''">
+				wxAccountName like '%${wxAccountName}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="isExist" resultType="WxAccount" parameterType="String">
+		select
+		<include refid="selectId" />
+		from wxaccount
+		where wxAccountName = #{wxAccountName}
+	</select>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="query" resultType="WxAccount" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxaccount
+		<where>
+			<if test="t.wxAccountName != null and t.wxAccountName != ''">
+				wxAccountName like '%${t.wxAccountName}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryNoMatch" resultType="WxAccount" parameterType="java.util.HashMap">
+		select
+		a.id,
+		a.wxAccountName,
+		a.wxAccountNo,
+		a.wxType,
+		a.description,
+		a.state,
+		a.createTime
+		from wxaccount a
+		<where>
+			<if test="a.wxAccountName != null and a.wxAccountName != ''">
+				wxAccountName like '%${a.wxAccountName}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加公众号 -->
+	<insert id="add" parameterType="WxAccount">
+		insert into wxaccount (
+		wxAccountName,
+		wxAccountNo,
+		wxType,
+		description,
+		state,
+		createTime )
+		select #{wxAccountName},
+		#{wxAccountNo},
+		#{wxType}, 
+		#{description},
+		#{state},
+		sysdate()
+		from DUAL
+		where #{wxAccountNo} not in (select wxAccountNo from wxaccount)
+	</insert>
+	
+	<!-- 增加wxinfo -->
+	<insert id="addwxinfo" parameterType="WxAccount">	
+	  insert into gather_weixininfo (
+		weixin_name,
+		weixin_no,
+		openid,
+		last_scan_date,
+		update_num,
+		create_date
+		)
+		select #{wxAccountName},
+		#{wxAccountNo},
+		'',
+		sysdate(),
+		0,
+		sysdate()
+		from DUAL
+		where #{wxAccountNo} not in (select weixin_no from gather_weixininfo)
+    </insert>
+    
+	<delete id="delete" parameterType="String">
+		delete from wxaccount where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxAccount">
+		select
+		<include refid="selectId" />
+		from wxaccount where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxAccount">
+		update wxaccount
+		<set>
+			<if test="wxAccountName != null and wxAccountName != ''">
+				wxAccountName=#{wxAccountName},
+			</if>
+			<if test="wxAccountNo != null and wxAccountNo != ''">
+				wxAccountNo=#{wxAccountNo},
+			</if>
+			<if test="wxType != null and wxType != ''">
+				wxType=#{wxType},
+			</if>
+			<if test="description != null and description != ''">
+				description=#{description},
+			</if>
+			<if test="state != null and state != ''">
+				state=#{state},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				createTime=#{createTime}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 验证用户登陆 -->
+	<select id="countAccount" parameterType="WxAccount" resultType="WxAccount">
+		select
+		<include refid="selectId" />
+		from wxaccount where
+		wxAccountName=#{wxAccountName} and wxAccountNo=#{wxAccountNo}
+	</select>
+
+	<!-- 根据用户名查出id -->
+	<select id="querySingleAccount" parameterType="String"
+		resultType="WxAccount">
+		select
+		<include refid="selectId" />
+		from wxaccount where wxAccountName=#{wxAccountName}
+	</select>
+</mapper>

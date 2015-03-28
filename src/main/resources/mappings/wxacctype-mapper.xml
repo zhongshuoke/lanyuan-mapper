@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxAccTypeMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		wxType,
+        wxTypeSN,
+		createTime
+	</sql>
+
+	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
+	<select id="queryAll" resultType="WxAccType" parameterType="WxAccType">
+		select
+		<include refid="selectId" />
+		from wxacctype
+		<where>
+			<if test="wxTypeSN != null and wxTypeSN != ''">
+				and wxTypeSN like '%${wxTypeSN}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="isExist" resultType="WxAccType" parameterType="String">
+		select
+		<include refid="selectId" />
+		from wxacctype
+		where wxType = #{wxType}
+	</select>
+
+	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
+	<select id="query" resultType="WxAccType" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxacctype t
+		<where>
+			<if test="t.wxType != null and t.wxType != ''">
+				wxType like '%${t.wxType}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="queryNoMatch" resultType="WxAccType" parameterType="java.util.HashMap">
+		select
+		a.id,
+		a.wxType,
+		a.wxTypeSN,
+		a.createTime
+		from wxacctype a
+		<where>
+			<if test="a.wxType != null and a.wxType != ''">
+				wxType like '%${a.wxType}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="add" parameterType="WxAccType">
+		insert into wxacctype (
+		wxType,
+		wxTypeSN,
+		createTime )
+		values (#{wxType},
+		#{wxTypeSN},
+		sysdate())
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from wxacctype where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxAccType">
+		select
+		<include refid="selectId" />
+		from wxacctype where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxAccType">
+		update wxacctype
+		<set>
+			<if test="wxType != null and wxType != ''">
+				wxType=#{wxType},
+			</if>
+			<if test="wxTypeSN != null and wxTypeSN != ''">
+				wxTypeSN=#{wxTypeSN},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<select id="countType" parameterType="WxAccType" resultType="WxAccType">
+		select
+		<include refid="selectId" />
+		from wxacctype where
+		wxType=#{wxType} and wxTypeSN=#{wxTypeSN}
+	</select>
+
+	<!-- 根据用户名查出id -->
+	<select id="querySingleType" parameterType="String"
+		resultType="WxAccType">
+		select
+		<include refid="selectId" />
+		from wxacctype where wxType=#{wxType}
+	</select>
+</mapper>

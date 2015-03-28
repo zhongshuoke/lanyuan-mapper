@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxTaskMapper">
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		name,
+        task,
+		interval_id,
+		crontab_id,
+		args,
+		kwargs,
+		enabled,
+		last_run_at,
+		total_run_count,
+		date_changed,
+		description
+	</sql>
+
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxTask" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask
+		<where>
+			<if test="name != null and name != ''">
+				name like '%${name}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="isExist" resultType="WxTask" parameterType="Integer">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask
+		where crontab_id = #{crontab_id}
+	</select>
+
+	<!--resultType="WxTask" 每返回一条结果封装到WxTask里 -->
+	<select id="query" resultType="WxTask" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask
+		<where>
+			<if test="t.name != null and t.name != ''">
+				name like '%${t.name}%' and
+			</if>
+			task = 'gather.tasks.scan_all_article'
+		</where>
+		order by id asc
+	</select>
+
+	<select id="queryNoMatch" resultType="WxTask" parameterType="java.util.HashMap">
+		select
+        <include refid="selectId" />
+		<where>
+			<if test="a.name != null and a.name != ''">
+				name like '%${a.name}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加任务 -->
+	<insert id="add" parameterType="WxTask">
+		insert into djcelery_periodictask (
+		name,
+        task,
+		interval_id,
+		crontab_id,
+		args,
+		kwargs,
+		enabled,
+		last_run_at,
+		total_run_count,
+		date_changed,
+		description )
+		values (#{name},
+		#{task},
+		null, 
+		#{crontab_id},
+		#{args},
+		#{kwargs}, 
+		#{enabled},
+		sysdate(),
+		0, 
+		sysdate(),
+		#{description})
+	</insert>
+	
+	<update id="updateTasks">
+		update djcelery_periodictasks
+        set last_update = sysdate()
+	</update>
+
+	<delete id="delete" parameterType="String">
+		delete from djcelery_periodictask where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxTask">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxTask">
+		update djcelery_periodictask
+		<set>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="crontab_id != null and crontab_id != ''">
+				crontab_id=#{crontab_id},
+			</if>
+			<if test="enabled != null and enabled != ''">
+				enabled=#{enabled},
+			</if>
+			<if test="args != null and args != ''">
+				args=#{args},
+			</if>
+			<if test="kwargs != null and kwargs != ''">
+				kwargs=#{kwargs},
+			</if>
+			<if test="description != null and description != ''">
+				description=#{description}
+			</if>			
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 验证用户登陆 -->
+	<select id="countTask" parameterType="WxTask" resultType="WxTask">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask where
+		id=#{id} and name=#{name}
+	</select>
+
+	<!-- 根据用户名查出id -->
+	<select id="querySingleTask" parameterType="String"
+		resultType="WxTask">
+		select
+		<include refid="selectId" />
+		from djcelery_periodictask where name=#{name}
+	</select>
+</mapper>
