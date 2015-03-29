@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.AdvertisementMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		title,
+		url,
+		createTime
+	</sql>
+	
+	<!-- 总记录数 -->
+	<select id="count" parameterType="Advertisement" resultType="int">
+		select count(1) 
+		from Advertisement
+		<where>
+			<if test="id != null and id != ''">
+				id =#{AdvertisementName}
+			</if>
+			<if test="title != null and title != ''">
+				title like '%${title}%'
+			</if>
+			<if test="url != null and url != ''">
+				url like '%${url}%'
+			</if>
+		</where>
+	</select>
+
+	<!--resultType="Advertisement" 每返回一条结果封装到Advertisement里 -->
+	<select id="queryAll" resultType="Advertisement" parameterType="Advertisement">
+		select
+		<include refid="selectId" />
+		from Advertisement
+		<where>
+			<if test="id != null and id != ''">
+				id =#{AdvertisementName}
+			</if>
+			<if test="title != null and title != ''">
+				title like '%${title}%'
+			</if>
+			<if test="url != null and url != ''">
+				url like '%${url}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="add" parameterType="Advertisement">
+		insert into Advertisement (
+		title,
+		url,
+		createTime )
+		values (#{title},
+		#{url}, 
+		#{createTime})
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from Advertisement where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="Advertisement">
+		select
+		<include refid="selectId" />
+		from Advertisement where id=#{id}
+	</select>
+
+	<update id="update" parameterType="Advertisement">
+		update Advertisement
+		<set>
+			<if test="title != null and title != ''">
+				title=#{title},
+			</if>
+			<if test="url != null and url != ''">
+				url=#{url},
+			</if>
+			<if test="createTime != null and createTime != ''">
+				createTime=#{createTime}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
