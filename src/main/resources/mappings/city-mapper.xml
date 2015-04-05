@@ -9,7 +9,7 @@
 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
 	<!-- 以下与实体类的中字段一致 -->
 	<sql id="selectId">
-		cityId,
+		cityId as id,
 		cityName
 	</sql>
 
@@ -18,13 +18,18 @@
 		select
 		<include refid="selectId" />
 		from city
+		<where>
+			<if test="cityName != null and cityName != ''">
+				and cityName like '%${cityName}%'
+			</if>
+		</where>
 	</select>
 
 	<select id="isExist" resultType="City" parameterType="String">
 		select
 		<include refid="selectId" />
 		from city
-		where cityId = #{cityId}
+		where cityId = #{id}
 	</select>
 
 	<!--resultType="City" 每返回一条结果封装到City里 -->
@@ -32,6 +37,11 @@
 		select
 		<include refid="selectId" />
 		from city t
+		<where>
+			<if test="t.cityName != null and t.cityName != ''">
+				cityName like '%${t.cityName}%'
+			</if>
+		</where>
 	</select>
 
 	<!-- 增加用户 -->
@@ -39,19 +49,19 @@
 		insert into city (
         cityId,
         cityName )
-		values (#{cityId},
+		values (#{id},
 		#{cityName})
 	</insert>
 
 	<delete id="delete" parameterType="String">
 		delete from city where
-		cityId=#{cityId}
+		cityId=#{id}
 	</delete>
 
 	<select id="getById" parameterType="String" resultType="City">
 		select
 		<include refid="selectId" />
-		from city where cityId=#{cityId}
+		from city where cityId=#{id}
 	</select>
 
 	<update id="update" parameterType="City">
@@ -61,13 +71,20 @@
 				cityName=#{cityName},
 			</if>
 		</set>
-		where cityId=#{cityId}
+		where cityId=#{id}
 	</update>
 
 	<select id="countCity" parameterType="City" resultType="City">
 		select
 		<include refid="selectId" />
 		from city where
-		cityId=#{cityId} and cityName=#{cityName}
+		cityId=#{id} and cityName=#{cityName}
 	</select>
+	
+    <select id="queryCityList" resultType="City" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from city t
+		limit #{offset}, #{limit}
+	</select>	
 </mapper>
