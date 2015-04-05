@@ -87,11 +87,4 @@
 		from city where
 		cityId=#{id} and cityName=#{cityName}
 	</select>
-	
-    <select id="queryCityList" resultType="City" parameterType="java.util.HashMap">
-		select
-		<include refid="selectId" />
-		from city t
-		limit #{offset}, #{limit}
-	</select>	
 </mapper>
