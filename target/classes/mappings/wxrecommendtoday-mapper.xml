@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxRecommendTodayMapper">
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		wxAccountNo,
+        title,
+		str_abstract,
+		publishTime,
+		captureTime,
+		readNum,
+		goodNum,
+		sourceUrl
+	</sql>
+
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxRecommendToday" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from recommend_article
+	</select>
+	
+	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->	
+	<select id="queryMoreWxArticleNoClassId" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle
+		<where>
+			<if test="keyword != null and keyword != ''">
+				title like '%${keyword}%'
+			</if>
+			<if test="max_article_id != null ">
+				<![CDATA[id <= #{max_article_id}]]>
+			</if>
+		</where>
+		order by publish_date desc,id desc
+		limit #{offset}, #{limit}
+	</select>
+	<select id="queryMoreWxArticleByClassId" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle w, wxaccount wa, wxacctype wt
+		<where>
+			w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id})
+			<if test="keyword != null and keyword != ''">
+				w.title like '%${keyword}%'
+			</if>
+			<if test="max_article_id != null ">
+				<![CDATA[w.id <= #{max_article_id}]]>
+			</if>
+		</where>
+		order by w.publish_date desc,w.id desc
+		limit #{offset}, #{limit}
+	</select>
+
+	<select id="isExist" resultType="WxRecommendToday" parameterType="Integer">
+		select
+		<include refid="selectId" />
+		from recommend_article
+		where id = #{id}
+	</select>
+
+	<!--resultType="WxRecommendToday" 每返回一条结果封装到WxRecommendToday里 -->
+	<select id="query" resultType="WxRecommendToday" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from recommend_article
+		<where>
+			<if test="t.title != null and t.title != ''">
+				title like '%${t.title}%'
+			</if>
+		</where>
+		order by publishTime desc,id desc
+	</select>
+
+	<select id="queryNoMatch" resultType="WxRecommendToday" parameterType="java.util.HashMap">
+		select
+		a.id,
+		a.wxAccountNo,
+		a.title,
+		a.publishTime,
+		a.captureTime,
+		a.sourceUrl,
+		a.readNum,
+		a.goodNum
+		from recommend_article a
+	</select>
+
+	<!-- 增加今日推荐文章 -->
+	<insert id="add" parameterType="WxRecommendToday">
+		insert into recommend_article (
+		wxAccountNo,
+		title,
+		str_abstract,
+		publishTime,
+		captureTime,
+		sourceUrl )
+		values (#{wxAccountNo},
+		#{title},
+		#{str_abstract},
+		#{publishTime},
+		#{captureTime},
+		#{sourceUrl})
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from recommend_article where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxRecommendToday">
+		select
+		<include refid="selectId" />
+		from recommend_article where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxRecommendToday">
+		update recommend_article
+		<set>
+		   	<if test="str_abstract!= null and str_abstract != ''">
+				str_abstract=#{str_abstract},
+			</if>
+			<if test="title != null and title != ''">
+				title=#{title},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 计算推荐文章数 -->
+	<select id="countRecommArticle" parameterType="WxRecommendToday" resultType="WxRecommendToday">
+		select
+		<include refid="selectId" />
+		from recommend_article where
+		wxAccountNo=#{wxAccountNo} and title=#{title}
+	</select>
+
+	<!-- 根据id查询单篇文章信息 -->
+	<select id="querySingleRecommArticle" parameterType="Integer"
+		resultType="WxRecommendToday">
+		select id,content,publishTime,readNum,goodNum,sourceUrl
+		from recommend_article where id=#{id}
+	</select>
+	
+</mapper>
