@@ -16,6 +16,15 @@
 		url as sourceUrl
 	</sql>
 	
+	<sql id="wxArticleSelectId">
+		w.id,
+		w.weixin_no as wxAccountNo,
+        w.title,
+		w.publish_date as publishTime,
+		w.create_date as captureTime,
+		w.url as sourceUrl
+	</sql>
+	
 	<sql id="selectContentId">
 		id,
 		weixin_no as wxAccountNo,
@@ -57,10 +66,12 @@
 	</select>
 	<select id="queryMoreWxArticleByClassId" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="wxArticleSelectId" />
 		from gather_weixinarticle w, wxaccount wa, wxacctype wt
 		<where>
-			w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id})
+			<if test="1==1">
+				w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id})
+			</if>
 			<if test="keyword != null and keyword != ''">
 				w.title like '%${keyword}%'
 			</if>

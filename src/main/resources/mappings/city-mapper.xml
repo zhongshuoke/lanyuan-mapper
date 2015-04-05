@@ -33,6 +33,13 @@
 		<include refid="selectId" />
 		from city t
 	</select>
+	
+	<select id="queryCityList" resultType="City" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from city t
+		limit #{offset}, #{limit}
+	</select>
 
 	<!-- 增加用户 -->
 	<insert id="add" parameterType="City">
