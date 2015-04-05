@@ -15,17 +15,28 @@
 		wxType,
 		description,
 		state,
-		createTime
+		createTime,
+		cityId
 	</sql>
 
 	<!--resultType="Account" 每返回一条结果封装到Account里 -->
 	<select id="queryAll" resultType="WxAccount" parameterType="WxAccount">
 		select
-		<include refid="selectId" />
-		from wxaccount
+		r.id,
+		r.wxAccountName,
+        r.wxAccountNo,
+		r.wxType,
+		r.description,
+		r.state,
+		r.createTime,
+		s.cityName
+		from wxaccount r,city s
 		<where>
+		    r.cityId is not null
+		    and s.cityId is not null
+		    and r.cityId = s.cityId
 			<if test="wxAccountName != null and wxAccountName != ''">
-				wxAccountName like '%${wxAccountName}%'
+				and wxAccountName like '%${wxAccountName}%'
 			</if>
 		</where>
 	</select>
@@ -40,11 +51,21 @@
 	<!--resultType="Account" 每返回一条结果封装到Account里 -->
 	<select id="query" resultType="WxAccount" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
-		from wxaccount
+		r.id,
+		r.wxAccountName,
+        r.wxAccountNo,
+		r.wxType,
+		r.description,
+		r.state,
+		r.createTime,
+		s.cityName cityName
+		from wxaccount r,city s
 		<where>
+		    r.cityId is not null
+		    and s.cityId is not null
+		    and r.cityId = s.cityId
 			<if test="t.wxAccountName != null and t.wxAccountName != ''">
-				wxAccountName like '%${t.wxAccountName}%'
+				and wxAccountName like '%${t.wxAccountName}%'
 			</if>
 		</where>
 	</select>
@@ -57,7 +78,8 @@
 		a.wxType,
 		a.description,
 		a.state,
-		a.createTime
+		a.createTime,
+		a.cityId
 		from wxaccount a
 		<where>
 			<if test="a.wxAccountName != null and a.wxAccountName != ''">
@@ -74,13 +96,15 @@
 		wxType,
 		description,
 		state,
-		createTime )
+		createTime,
+		cityId )
 		select #{wxAccountName},
 		#{wxAccountNo},
 		#{wxType}, 
 		#{description},
 		#{state},
-		sysdate()
+		sysdate(),
+		cityId
 		from DUAL
 		where #{wxAccountNo} not in (select wxAccountNo from wxaccount)
 	</insert>
@@ -135,7 +159,10 @@
 				state=#{state},
 			</if>
 			<if test="createTime != null and createTime != ''">
-				createTime=#{createTime}
+				createTime=#{createTime},
+			</if>
+			<if test="cityId != null and cityId != ''">
+				cityId=#{cityId}
 			</if>
 		</set>
 		where id=#{id}
