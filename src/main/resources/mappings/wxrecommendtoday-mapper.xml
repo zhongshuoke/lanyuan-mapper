@@ -16,7 +16,8 @@
 		captureTime,
 		readNum,
 		goodNum,
-		sourceUrl
+		sourceUrl,
+		picUrl
 	</sql>
 
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
@@ -88,7 +89,8 @@
 		a.captureTime,
 		a.sourceUrl,
 		a.readNum,
-		a.goodNum
+		a.goodNum,
+		a.picUrl
 		from recommend_article a
 	</select>
 
@@ -132,6 +134,9 @@
 			<if test="content != null and content != ''">
 				content=#{content}
 			</if>
+			<if test="picUrl != null and picUrl != ''">
+				picUrl=#{picUrl}
+			</if>			
 		</set>
 		where id=#{id}
 	</update>
