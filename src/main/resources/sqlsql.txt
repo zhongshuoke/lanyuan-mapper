@@ -1,0 +1,17 @@
+15、给文章点赞      ok
+9、文章阅读数加一   ok
+
+14、关键字订阅
+13、栏目订阅
+
+12、文章投稿
+
+11、用户登陆
+10、用户注册
+7、返回所有栏目
+
+
+alter table gather_weixinarticle add read_num BIGINT(20) DEFAULT 0;
+alter table gather_weixinarticle add good_num BIGINT(20) DEFAULT 0;
+alter table gather_weixinarticle add pic_url VARCHAR(256) DEFAULT NULL;
+

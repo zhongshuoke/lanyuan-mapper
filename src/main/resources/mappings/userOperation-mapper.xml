@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxUserOperationMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		userId,
+		operateType,
+		operateId,
+		description,
+		createDate
+	</sql>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxUserOperation" parameterType="WxUserOperation">
+		select
+		<include refid="selectId" />
+		from wxuseroperattion
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="operateType != null and operateType != ''">
+				and operateType=#{operateType}
+			</if>
+			<if test="operateId != null">
+				and operateId=#{operateId}
+			</if>
+			<if test="description != null and description != ''">
+				and description=#{description}
+			</if>
+		</where>
+	</select>
+
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="query" resultType="WxUserOperation" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxuseroperattion
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="operateType != null and operateType != ''">
+				and operateType=#{operateType}
+			</if>
+			<if test="operateId != null">
+				and operateId=#{operateId}
+			</if>
+			<if test="description != null and description != ''">
+				and description=#{description}
+			</if>
+		</where>
+	</select>
+
+	<insert id="add" parameterType="WxUserOperation">
+		insert into wxuseroperattion (
+		userId,
+		operateType,
+		operateId,
+		description,
+		createDate)
+		values(
+		#{userId},
+		#{operateType},
+		#{operateId},
+		#{description},
+		sysdate()
+		)
+	</insert>
+    
+	<delete id="delete" parameterType="String">
+		delete from wxuseroperattion where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxUserOperation">
+		select
+		<include refid="selectId" />
+		from wxuseroperattion where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxUserOperation">
+		update wxuseroperattion
+		<set>
+			<if test="userId != null">
+				userId=#{userId},
+			</if>
+			<if test="operateType != null and operateType != ''">
+				operateType=#{operateType},
+			</if>
+			<if test="operateId != null">
+				operateId=#{operateId},
+			</if>
+			<if test="description != null and description != ''">
+				description=#{description},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
