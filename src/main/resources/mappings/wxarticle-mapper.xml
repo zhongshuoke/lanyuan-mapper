@@ -38,7 +38,10 @@
         content,
 		publish_date as publishTime,
 		create_date as captureTime,
-		url as sourceUrl
+		url as sourceUrl,
+		read_num as readNum,
+		good_num as goodNum,
+		pic_url as picUrl
 	</sql>
 
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->

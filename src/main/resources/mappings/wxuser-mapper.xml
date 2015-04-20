@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxUserMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		username,
+		password,
+		nickName,
+		sex,
+		cellPhoneNo,
+		location,
+		email,
+		registerDate,
+		token
+	</sql>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxUser" parameterType="WxUser">
+		select
+		<include refid="selectId" />
+		from wxuser
+		<where>
+			<if test="id>0">
+				and id=#{id}
+			</if>
+			<if test="username != null and username != ''">
+				and username=#{username}
+			</if>
+			<if test="password != null and password != ''">
+				and password=#{password}
+			</if>
+			<if test="nickName != null and nickName != ''">
+				and nickName=#{nickName}
+			</if>
+			<if test="sex != null and sex != ''">
+				and sex=#{sex}
+			</if>
+			<if test="cellPhoneNo != null and cellPhoneNo != ''">
+				and cellPhoneNo=#{cellPhoneNo}
+			</if>
+			<if test="location != null and location != ''">
+				and location=#{location}
+			</if>
+			<if test="nickName != null and nickName != ''">
+				and email=#{email}
+			</if>
+			<if test="token != null and token != ''">
+				and token=#{token}
+			</if>
+		</where>
+	</select>
+
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="query" resultType="WxUser" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxuser
+		<where>
+			<if test="id>0">
+				and id=#{id}
+			</if>
+			<if test="username != null and username != ''">
+				and username=#{username}
+			</if>
+			<if test="password != null and password != ''">
+				and password=#{password}
+			</if>
+			<if test="nickName != null and nickName != ''">
+				and nickName=#{nickName}
+			</if>
+			<if test="sex != null and sex != ''">
+				and sex=#{sex}
+			</if>
+			<if test="cellPhoneNo != null and cellPhoneNo != ''">
+				and cellPhoneNo=#{cellPhoneNo}
+			</if>
+			<if test="location != null and location != ''">
+				and location=#{location}
+			</if>
+			<if test="nickName != null and nickName != ''">
+				and email=#{email}
+			</if>
+			<if test="token != null and token != ''">
+				and token=#{token}
+			</if>
+		</where>
+	</select>
+
+	<insert id="add" parameterType="WxUser">
+		insert into wxuser (
+		id,
+		username,
+		password,
+		nickName,
+		sex,
+		cellPhoneNo,
+		location,
+		email,
+		registerDate,
+		token)
+		values(
+		#{id},
+		#{username},
+		#{password},
+		#{nickName},
+		#{sex},
+		#{cellPhoneNo},
+		#{location},
+		#{email},
+		sysdate(),
+		#{token}
+		)
+	</insert>
+    
+	<delete id="delete" parameterType="String">
+		delete from wxuser where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxUser">
+		select
+		<include refid="selectId" />
+		from wxuser where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxUser">
+		update wxuser
+		<set>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="nickName != null and nickName != ''">
+				nickName=#{nickName},
+			</if>
+			<if test="sex != null and sex != ''">
+				cellPhoneNo=#{cellPhoneNo},
+			</if>
+			<if test="location != null and location != ''">
+				location=#{location},
+			</if>
+			<if test="nickName != null and nickName != ''">
+				email=#{email},
+			</if>
+			<if test="token != null and token != ''">
+				token=#{token},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
