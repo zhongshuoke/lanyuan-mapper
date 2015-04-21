@@ -12,7 +12,8 @@
 		id,
 		wxType,
         wxTypeSN,
-		createTime
+		createTime,
+		typePicUrl
 	</sql>
 
 	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
@@ -51,7 +52,8 @@
 		a.id,
 		a.wxType,
 		a.wxTypeSN,
-		a.createTime
+		a.createTime,
+		a.typePicUrl
 		from wxacctype a
 		<where>
 			<if test="a.wxType != null and a.wxType != ''">
@@ -65,10 +67,12 @@
 		insert into wxacctype (
 		wxType,
 		wxTypeSN,
-		createTime )
+		createTime,
+		typePicUrl )
 		values (#{wxType},
 		#{wxTypeSN},
-		sysdate())
+		sysdate(),
+		#{typePicUrl})
 	</insert>
 
 	<delete id="delete" parameterType="String">
@@ -90,6 +94,9 @@
 			</if>
 			<if test="wxTypeSN != null and wxTypeSN != ''">
 				wxTypeSN=#{wxTypeSN},
+			</if>
+			<if test="typePicUrl != null and typePicUrl != ''">
+				typePicUrl=#{typePicUrl}
 			</if>
 		</set>
 		where id=#{id}

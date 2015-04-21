@@ -12,6 +12,7 @@
 		id,
 		title,
 		url,
+		picurl,
 		createTime
 	</sql>
 	
@@ -55,9 +56,11 @@
 		insert into Advertisement (
 		title,
 		url,
+		picurl,
 		createTime )
 		values (#{title},
-		#{url}, 
+		#{url},
+		#{picurl}, 
 		#{createTime})
 	</insert>
 
@@ -72,6 +75,13 @@
 		from Advertisement where id=#{id}
 	</select>
 
+	<select id="isExist" resultType="Advertisement" parameterType="String">
+		select
+		<include refid="selectId" />
+		from advertisement
+		where Id = #{Id}
+	</select>
+
 	<update id="update" parameterType="Advertisement">
 		update Advertisement
 		<set>
@@ -80,6 +90,9 @@
 			</if>
 			<if test="url != null and url != ''">
 				url=#{url},
+			</if>
+			<if test="picurl != null and picurl != ''">
+				picurl=#{picurl}
 			</if>
 			<if test="createTime != null and createTime != ''">
 				createTime=#{createTime}
