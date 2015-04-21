@@ -16,7 +16,7 @@
 		url as sourceUrl,
 		read_num as readNum,
 		good_num as goodNum,
-		pic_url as picUrl,
+		pic_url as picUrl
 	</sql>
 	
 	<sql id="wxArticleSelectId">
@@ -157,6 +157,36 @@
 		delete from gather_weixinarticle where
 		id=#{id}
 	</delete>
+	
+	<!-- 将普通文章转移到推荐文章 -->
+	<insert id="recomm" parameterType="String">
+		insert into recommend_article (
+		id,
+		wxAccountNo,
+		title,
+		content,
+		publishTime,
+		captureTime,
+		sourceUrl,
+		readNum,
+		goodNum)
+		select
+		id, 
+		weixin_no,
+		title,
+		content, 
+		publish_date,
+		create_date,
+		url,
+		read_num,
+		good_num
+		from gather_weixinarticle
+		where id=#{id}
+		and not exists(
+		select 1 from recommend_article
+		where id=#{id}
+		)
+	</insert>
 
 	<select id="getById" parameterType="String" resultType="WxArticle">
 		select

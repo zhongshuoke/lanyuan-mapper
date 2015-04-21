@@ -13,7 +13,10 @@
         title,
 		publish_date as publishTime,
 		create_date as captureTime,
-		url as sourceUrl
+		url as sourceUrl,
+		read_num as readNum,
+		good_num as goodNum,
+		pic_url as picUrl
 	</sql>
 	
 	<sql id="wxArticleSelectId">
@@ -22,7 +25,10 @@
         w.title,
 		w.publish_date as publishTime,
 		w.create_date as captureTime,
-		w.url as sourceUrl
+		w.url as sourceUrl,
+		w.read_num as readNum,
+		w.good_num as goodNum,
+		w.pic_url as picUrl
 	</sql>
 	
 	<sql id="selectContentId">
@@ -32,7 +38,10 @@
         content,
 		publish_date as publishTime,
 		create_date as captureTime,
-		url as sourceUrl
+		url as sourceUrl,
+		read_num as readNum,
+		good_num as goodNum,
+		pic_url as picUrl
 	</sql>
 
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
@@ -111,6 +120,9 @@
 		a.publish_date as publishTime,
 		a.create_date as captureTime,
 		a.url as sourceUrl
+		a.read_num as readNum,
+		a.good_num as goodNum,
+		a.pic_url as picUrl
 		from gather_weixinarticle a
 		<where>
 			<if test="a.title != null and a.title != ''">
@@ -126,19 +138,55 @@
 		title,
 		publish_date,
 		create_date,
-		url )
+		url,
+		read_num,
+		good_num,
+		pic_url)
 		values (#{wxAccountNo},
 		#{title},
 		#{content}, 
 		#{publishTime},
 		#{captureTime},
-		#{sourceUrl})
+		#{sourceUrl},
+		#{read_num},
+		#{good_num},
+		#{pic_url})
 	</insert>
 
 	<delete id="delete" parameterType="String">
 		delete from gather_weixinarticle where
 		id=#{id}
 	</delete>
+	
+	<!-- 将普通文章转移到推荐文章 -->
+	<insert id="recomm" parameterType="String">
+		insert into recommend_article (
+		id,
+		wxAccountNo,
+		title,
+		content,
+		publishTime,
+		captureTime,
+		sourceUrl,
+		readNum,
+		goodNum)
+		select
+		id, 
+		weixin_no,
+		title,
+		content, 
+		publish_date,
+		create_date,
+		url,
+		read_num,
+		good_num
+		from gather_weixinarticle
+		where id=#{id}
+		and not exists(
+		select 1 from recommend_article
+		where id=#{id}
+		)
+	</insert>
 
 	<select id="getById" parameterType="String" resultType="WxArticle">
 		select
@@ -154,6 +202,15 @@
 			</if>
 			<if test="content != null and content != ''">
 				content=#{content},
+			</if>
+			<if test="readNum != null">
+				read_num=#{readNum},
+			</if>
+			<if test="goodNum != null">
+				good_num=#{goodNum},
+			</if>
+			<if test="picUrl != null and picUrl != ''">
+				pic_url=#{picUrl},
 			</if>
 		</set>
 		where id=#{id}

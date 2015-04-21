@@ -18,6 +18,12 @@ public interface WxArticleMapper extends BaseMapper<WxArticle>{
 	 */
 	public WxArticle countArticle(WxArticle wxArticle);
 	
+	/**
+	 * 推荐文章
+	 * @param id
+	 */
+	public void recomm(String id);
+	
 	public List<WxArticle> queryNoMatch(Map<String, Object> map);
 	
 	/**
