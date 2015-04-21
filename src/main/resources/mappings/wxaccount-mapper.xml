@@ -29,7 +29,7 @@
 		r.description,
 		r.state,
 		r.createTime,
-		s.cityName
+		s.cityName cityName
 		from wxaccount r,city s
 		<where>
 		    r.cityId is not null
@@ -72,18 +72,21 @@
 
 	<select id="queryNoMatch" resultType="WxAccount" parameterType="java.util.HashMap">
 		select
-		a.id,
-		a.wxAccountName,
-		a.wxAccountNo,
-		a.wxType,
-		a.description,
-		a.state,
-		a.createTime,
-		a.cityId
-		from wxaccount a
+		r.id,
+		r.wxAccountName,
+		r.wxAccountNo,
+		r.wxType,
+		r.description,
+		r.state,
+		r.createTime,
+		s.cityName cityName
+		from wxaccount r,city s
 		<where>
+		    r.cityId is not null
+		    and s.cityId is not null
+		    and r.cityId = s.cityId
 			<if test="a.wxAccountName != null and a.wxAccountName != ''">
-				wxAccountName like '%${a.wxAccountName}%'
+				wxAccountName like '%${t.wxAccountName}%'
 			</if>
 		</where>
 	</select>
@@ -104,7 +107,7 @@
 		#{description},
 		#{state},
 		sysdate(),
-		cityId
+		#{cityId}
 		from DUAL
 		where #{wxAccountNo} not in (select wxAccountNo from wxaccount)
 	</insert>
