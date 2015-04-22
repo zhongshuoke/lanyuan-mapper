@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.WxArticleApplyMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		userId,
+		username,
+		content,
+		createDate
+	</sql>
+	
+	<select id="queryWxArticleApplyList" resultType="WxArticleApply" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxarticleapply
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="username != null and username != ''">
+				and username=#{username}
+			</if>
+			<if test="content != null">
+				and content=#{content}
+			</if>
+		</where>
+		order by createDate desc,id desc
+		limit #{offset}, #{limit}
+	</select>
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="queryAll" resultType="WxArticleApply" parameterType="WxArticleApply">
+		select
+		<include refid="selectId" />
+		from wxarticleapply
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="username != null and username != ''">
+				and username=#{username}
+			</if>
+			<if test="content != null">
+				and content=#{content}
+			</if>
+		</where>
+	</select>
+
+
+	<!--resultType="Account" 每返回一条结果封装到Account里 -->
+	<select id="query" resultType="WxArticleApply" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxarticleapply
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="username != null and username != ''">
+				and username=#{username}
+			</if>
+			<if test="content != null">
+				and content=#{content}
+			</if>
+		</where>
+	</select>
+
+	<insert id="add" parameterType="WxArticleApply">
+		insert into wxarticleapply (
+		userId,
+		username,
+		content,
+		createDate)
+		values(
+		#{userId},
+		#{username},
+		#{content},
+		sysdate()
+		)
+	</insert>
+    
+	<delete id="delete" parameterType="String">
+		delete from wxarticleapply where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="WxArticleApply">
+		select
+		<include refid="selectId" />
+		from wxarticleapply where id=#{id}
+	</select>
+
+	<update id="update" parameterType="WxArticleApply">
+		update wxarticleapply
+		<set>
+			<if test="userId != null">
+				userId=#{userId},
+			</if>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

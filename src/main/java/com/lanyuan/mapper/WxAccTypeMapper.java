@@ -15,4 +15,6 @@ public interface WxAccTypeMapper extends BaseMapper<WxAccType>{
 	public WxAccType countType(WxAccType wxAccType);
 	
 	public List<WxAccType> queryNoMatch(Map<String, Object> map);
+	
+	public WxAccType getWxAccTypeByArticleId(String id);
 }

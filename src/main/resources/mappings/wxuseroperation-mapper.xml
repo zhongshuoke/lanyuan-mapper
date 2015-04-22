@@ -16,6 +16,28 @@
 		description,
 		createDate
 	</sql>
+	
+	<select id="queryWxUserOperationList" resultType="WxUserOperation" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from wxuseroperattion
+		<where>
+			<if test="userId != null">
+				and userId=#{userId}
+			</if>
+			<if test="operateType != null and operateType != ''">
+				and operateType=#{operateType}
+			</if>
+			<if test="operateId != null">
+				and operateId=#{operateId}
+			</if>
+			<if test="description != null and description != ''">
+				and description=#{description}
+			</if>
+		</where>
+		order by createDate desc,id desc
+		limit #{offset}, #{limit}
+	</select>
 
 	<!--resultType="Account" 每返回一条结果封装到Account里 -->
 	<select id="queryAll" resultType="WxUserOperation" parameterType="WxUserOperation">
