@@ -6,10 +6,15 @@
 
 11、用户登陆 ok
 10、用户注册 ok
-7、返回所有栏目
-12、文章投稿
+7、返回所有栏目 ok
+12、文章投稿 ok
 
-列表查询
+列表查询 ok
+
+今日推荐文档修改
+
+广告和通用文章列表 TODO
+server启动时登陆初始化
 
 
 alter table gather_weixinarticle add read_num BIGINT(20) DEFAULT 0;
@@ -40,3 +45,13 @@ CREATE TABLE `wxuser` (
   `token` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8
+
+DROP TABLE IF EXISTS `advertisement`;
+CREATE TABLE `advertisement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(128) DEFAULT NULL,
+  `url` varchar(128) DEFAULT NULL,
+  `picurl` varchar(128) DEFAULT NULL,
+  `createTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

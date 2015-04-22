@@ -27,6 +27,17 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="getWxAccTypeByArticleId" parameterType="String" resultType="WxAccType">
+		select
+		wt.id as id,
+		wt.wxType as wxType,
+        wt.wxTypeSN as wxTypeSN,
+		wt.createTime as createTime
+		from gather_weixinarticle w, wxaccount wa, wxacctype wt 
+		where w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and w.id=#{id}
+		limit 1
+	</select>
 
 	<select id="isExist" resultType="WxAccType" parameterType="String">
 		select

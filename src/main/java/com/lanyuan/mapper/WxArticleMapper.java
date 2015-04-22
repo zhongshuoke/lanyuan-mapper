@@ -39,4 +39,8 @@ public interface WxArticleMapper extends BaseMapper<WxArticle>{
 	 * @return
 	 */
 	public List<WxArticle> queryMoreWxArticleByClassId(Map<String, Object> map);
+	
+	public List<WxArticle> queryRelatedArticleList(Map<String, Object> map);
+	
+	public List<WxArticle> queryMoreRecommendArticleList(Map<String, Object> map);
 }

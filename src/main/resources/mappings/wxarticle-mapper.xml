@@ -43,7 +43,24 @@
 		good_num as goodNum,
 		pic_url as picUrl
 	</sql>
-
+	
+	<select id="queryRelatedArticleList" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from gather_weixinarticle where weixin_no=#{wxAccountNo} and id not in #{id}
+		order by createDate desc,id desc
+		limit #{offset}, #{limit}
+	</select>
+	
+	<select id="queryMoreRecommendArticleList" resultType="WxArticle" parameterType="java.util.HashMap">
+		select
+		<include refid="wxArticleSelectId" />
+		from gather_weixinarticle w, wxaccount wa, wxacctype wt 
+		where w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id}) and w.id not in #{id}
+		order by w.publish_date desc,w.id desc
+		limit #{offset}, #{limit}
+	</select>
+	
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
 	<select id="queryAll" resultType="WxArticle" parameterType="java.util.HashMap">
 		select

@@ -51,6 +51,18 @@
 		</where>
 	</select>
 
+	<!--resultType="Advertisement" 每返回一条结果封装到Advertisement里 -->
+	<select id="query" resultType="Advertisement" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from advertisement t
+		<where>
+			<if test="t.title != null and t.title != ''">
+				title like '%${t.title}%'
+			</if>
+		</where>
+	</select>
+
 	<!-- 增加用户 -->
 	<insert id="add" parameterType="Advertisement">
 		insert into Advertisement (
