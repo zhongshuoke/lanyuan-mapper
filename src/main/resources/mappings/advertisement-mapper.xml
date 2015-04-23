@@ -19,7 +19,7 @@
 	<!-- 总记录数 -->
 	<select id="count" parameterType="Advertisement" resultType="int">
 		select count(1) 
-		from Advertisement
+		from advertisement
 		<where>
 			<if test="id != null and id != ''">
 				id =#{AdvertisementName}
@@ -37,7 +37,7 @@
 	<select id="queryAll" resultType="Advertisement" parameterType="Advertisement">
 		select
 		<include refid="selectId" />
-		from Advertisement
+		from advertisement
 		<where>
 			<if test="id != null and id != ''">
 				id =#{AdvertisementName}
@@ -65,7 +65,7 @@
 
 	<!-- 增加用户 -->
 	<insert id="add" parameterType="Advertisement">
-		insert into Advertisement (
+		insert into advertisement (
 		title,
 		url,
 		picurl,
@@ -73,18 +73,18 @@
 		values (#{title},
 		#{url},
 		#{picurl}, 
-		#{createTime})
+		sysdate())
 	</insert>
 
 	<delete id="delete" parameterType="String">
-		delete from Advertisement where
+		delete from advertisement where
 		id=#{id}
 	</delete>
 
 	<select id="getById" parameterType="String" resultType="Advertisement">
 		select
 		<include refid="selectId" />
-		from Advertisement where id=#{id}
+		from advertisement where id=#{id}
 	</select>
 
 	<select id="isExist" resultType="Advertisement" parameterType="String">
@@ -95,7 +95,7 @@
 	</select>
 
 	<update id="update" parameterType="Advertisement">
-		update Advertisement
+		update advertisement
 		<set>
 			<if test="title != null and title != ''">
 				title=#{title},
@@ -104,7 +104,7 @@
 				url=#{url},
 			</if>
 			<if test="picurl != null and picurl != ''">
-				picurl=#{picurl}
+				picurl=#{picurl},
 			</if>
 			<if test="createTime != null and createTime != ''">
 				createTime=#{createTime}

@@ -24,6 +24,13 @@ public interface WxArticleMapper extends BaseMapper<WxArticle>{
 	 */
 	public void recomm(String id);
 	
+	/**
+	 * 更新文章的推荐状态
+	 * @param map
+	 * @return
+	 */
+	public void updateRecommStatus(String id);
+	
 	public List<WxArticle> queryNoMatch(Map<String, Object> map);
 	
 	/**

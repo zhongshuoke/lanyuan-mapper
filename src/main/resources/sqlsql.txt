@@ -21,6 +21,7 @@ alter table gather_weixinarticle add read_num BIGINT(20) DEFAULT 0;
 alter table gather_weixinarticle add good_num BIGINT(20) DEFAULT 0;
 alter table gather_weixinarticle add pic_url VARCHAR(256) DEFAULT NULL;
 alter table wxacctype add typepicurl VARCHAR(256) DEFAULT NULL;
+alter table gather_weixinarticle add isrecomm INT(4) DEFAULT 0;
 
 CREATE TABLE `wxuseroperattion` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

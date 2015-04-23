@@ -16,7 +16,8 @@
 		url as sourceUrl,
 		read_num as readNum,
 		good_num as goodNum,
-		pic_url as picUrl
+		pic_url as picUrl,
+		isrecomm as isrecomm
 	</sql>
 	
 	<sql id="wxArticleSelectId">
@@ -28,7 +29,8 @@
 		w.url as sourceUrl,
 		w.read_num as readNum,
 		w.good_num as goodNum,
-		w.pic_url as picUrl
+		w.pic_url as picUrl,
+		w.isrecomm as isrecomm
 	</sql>
 	
 	<sql id="selectContentId">
@@ -41,7 +43,8 @@
 		url as sourceUrl,
 		read_num as readNum,
 		good_num as goodNum,
-		pic_url as picUrl
+		pic_url as picUrl,
+		isrecomm
 	</sql>
 	
 	<select id="queryRelatedArticleList" resultType="WxArticle" parameterType="java.util.HashMap">
@@ -139,7 +142,8 @@
 		a.url as sourceUrl
 		a.read_num as readNum,
 		a.good_num as goodNum,
-		a.pic_url as picUrl
+		a.pic_url as picUrl,
+		a.isrecomm as isrecomm
 		from gather_weixinarticle a
 		<where>
 			<if test="a.title != null and a.title != ''">
@@ -227,8 +231,16 @@
 				good_num=#{goodNum},
 			</if>
 			<if test="picUrl != null and picUrl != ''">
-				pic_url=#{picUrl},
+				pic_url=#{picUrl}
 			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<update id="updateRecommStatus" parameterType="WxArticle">
+		update gather_weixinarticle
+		<set>
+			 isrecomm=1
 		</set>
 		where id=#{id}
 	</update>
