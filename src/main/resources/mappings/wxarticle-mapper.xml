@@ -29,7 +29,7 @@
 		w.url as sourceUrl,
 		w.read_num as readNum,
 		w.good_num as goodNum,
-		w.pic_url as picUrl,
+		'http://121.40.69.199:8000/media/'+w.pic_url as picUrl,
 		w.isrecomm as isrecomm
 	</sql>
 	
@@ -47,9 +47,22 @@
 		isrecomm
 	</sql>
 	
+	<sql id="selectPicUrlId">
+		id,
+		weixin_no as wxAccountNo,
+        title,
+		publish_date as publishTime,
+		create_date as captureTime,
+		url as sourceUrl,
+		read_num as readNum,
+		good_num as goodNum,
+		'http://121.40.69.199:8000/media/'+pic_url as picUrl,
+		isrecomm as isrecomm
+	</sql>
+	
 	<select id="queryRelatedArticleList" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from gather_weixinarticle where weixin_no=#{wxAccountNo} and id not in #{id}
 		order by createDate desc,id desc
 		limit #{offset}, #{limit}
@@ -67,7 +80,7 @@
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
 	<select id="queryAll" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from gather_weixinarticle
 		<where>
 			<if test="wxAccountNo != null and wxAccountNo != ''">
@@ -80,7 +93,7 @@
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->	
 	<select id="queryMoreWxArticleNoClassId" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from gather_weixinarticle
 		<where>
 			<if test="keyword != null and keyword != ''">

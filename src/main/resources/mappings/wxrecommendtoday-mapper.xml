@@ -19,6 +19,20 @@
 		sourceUrl,
 		picUrl
 	</sql>
+	
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectPicUrlId">
+		id,
+		wxAccountNo,
+        title,
+		str_abstract,
+		publishTime,
+		captureTime,
+		readNum,
+		goodNum,
+		sourceUrl,
+		'http://121.40.69.199:8000/media/'+picUrl
+	</sql>
 
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->
 	<select id="queryAll" resultType="WxRecommendToday" parameterType="java.util.HashMap">
@@ -30,7 +44,7 @@
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->	
 	<select id="queryMoreWxArticleNoClassId" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from gather_weixinarticle
 		<where>
 			<if test="keyword != null and keyword != ''">
@@ -45,7 +59,7 @@
 	</select>
 	<select id="queryMoreWxArticleByClassId" resultType="WxArticle" parameterType="java.util.HashMap">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from gather_weixinarticle w, wxaccount wa, wxacctype wt
 		<where>
 			w.weixin_no=wa.wxAccountNo and wa.wxType=wt.wxType and wt.id in (#{class_id})

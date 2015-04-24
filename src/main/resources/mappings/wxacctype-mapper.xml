@@ -15,11 +15,19 @@
 		createTime,
 		typePicUrl
 	</sql>
+	
+	<sql id="selectPicUrlId">
+		id,
+		wxType,
+        wxTypeSN,
+		createTime,
+		'http://121.40.69.199:8000/media/'+typePicUrl
+	</sql>
 
 	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
 	<select id="queryAll" resultType="WxAccType" parameterType="WxAccType">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from wxacctype
 		<where>
 			<if test="wxTypeSN != null and wxTypeSN != ''">
