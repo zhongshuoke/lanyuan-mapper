@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanyuan.mapper.TypePicMapper">
+
+	<!--mybatis ehcache缓存配置 -->
+	<!-- 以下两个<cache>标签二选一,第一个可以输出日志,第二个不输出日志 <cache type="org.mybatis.caches.ehcache.LoggingEhcache" 
+		/> -->
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache"/> -->
+	<!-- 以下与实体类的中字段一致 -->
+	<sql id="selectId">
+		id,
+		wxAccTypeId,
+        wxArticleId,
+		wxArticTitle,
+		typePicUrl
+	</sql>
+	
+	<sql id="selectPicUrlId">
+		id,
+		wxAccTypeId,
+        wxArticleId,
+		wxArticTitle,
+		'http://121.40.69.199:8000/media/'+typePicUrl
+	</sql>
+
+	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
+	<select id="queryAll" resultType="TypePic" parameterType="TypePic">
+		select
+		<include refid="selectId" />
+		from typepic
+	</select>
+	
+	<select id="query" resultType="TypePic" parameterType="java.util.HashMap">
+		select
+		<include refid="selectId" />
+		from typepic t
+		<where>
+			<if test="t.wxAccTypeId != null and t.wxAccTypeId != ''">
+				wxAccTypeId like '%${t.wxAccTypeId}%'
+			</if>
+		</where>
+	</select>	
+
+	<select id="isExist" resultType="WxAccType" parameterType="String">
+		select
+		<include refid="selectId" />
+		from typepic
+		where wxType = #{wxType}
+	</select>
+
+	<select id="queryNoMatch" resultType="WxAccType" parameterType="java.util.HashMap">
+		select
+		a.id,
+		a.wxAccTypeId,
+		a.wxArticleId,
+		a.wxArticTitle,
+		a.typePicUrl
+		from typepic a
+		<where>
+			<if test="a.wxType != null and a.wxType != ''">
+				wxType like '%${a.wxType}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 增加用户 -->
+	<insert id="add" parameterType="TypePic">
+		insert into typepic (
+		wxAccTypeId,
+		wxArticleId,
+		wxArticTitle,
+		typePicUrl )
+		values (#{wxAccTypeId},
+		#{wxArticleId},
+		#{wxArticTitle},
+		#{typePicUrl})
+	</insert>
+
+	<delete id="delete" parameterType="String">
+		delete from typepic where
+		id=#{id}
+	</delete>
+
+	<select id="getById" parameterType="String" resultType="TypePic">
+		select
+		<include refid="selectId" />
+		from typepic where id=#{id}
+	</select>
+
+	<update id="update" parameterType="TypePic">
+		update typepic
+		<set>
+			<if test="wxAccTypeId != null and wxAccTypeId != ''">
+				wxAccTypeId=#{wxAccTypeId},
+			</if>
+			<if test="wxArticleId != null and wxArticleId != ''">
+				wxArticleId=#{wxArticleId},
+			</if>
+			<if test="wxArticTitle != null and wxArticTitle != ''">
+				wxArticTitle=#{wxArticTitle},
+			</if>
+			<if test="typePicUrl != null and typePicUrl != ''">
+				typePicUrl=#{typePicUrl}
+			</if>			
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
