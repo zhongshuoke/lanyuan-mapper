@@ -56,3 +56,13 @@ CREATE TABLE `advertisement` (
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `typepic`;
+CREATE TABLE `typepic` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `wxAccTypeId` varchar(128) DEFAULT NULL,
+  `wxArticleId` varchar(128) DEFAULT NULL,
+  `wxArticTitle` varchar(128) DEFAULT NULL,
+  `typePicUrl` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
