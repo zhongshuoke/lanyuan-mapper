@@ -31,7 +31,7 @@
 		readNum,
 		goodNum,
 		sourceUrl,
-		'http://121.40.69.199:8000/media/'+picUrl
+		CONCAT('http://121.40.69.199:8000/media/',picUrl) as picUrl
 	</sql>
 
 	<!--resultType="wxArticle" 每返回一条结果封装到Account里 -->

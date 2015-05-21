@@ -29,7 +29,7 @@
 		w.url as sourceUrl,
 		w.read_num as readNum,
 		w.good_num as goodNum,
-		'http://121.40.69.199:8000/media/'+w.pic_url as picUrl,
+		CONCAT('http://121.40.69.199:8000/media/',w.pic_url) as picUrl,
 		w.isrecomm as isrecomm
 	</sql>
 	
@@ -56,7 +56,7 @@
 		url as sourceUrl,
 		read_num as readNum,
 		good_num as goodNum,
-		'http://121.40.69.199:8000/media/'+pic_url as picUrl,
+		CONCAT('http://121.40.69.199:8000/media/',pic_url) as picUrl,
 		isrecomm as isrecomm
 	</sql>
 	

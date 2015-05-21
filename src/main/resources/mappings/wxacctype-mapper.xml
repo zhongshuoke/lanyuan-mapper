@@ -21,7 +21,7 @@
 		wxType,
         wxTypeSN,
 		createTime,
-		'http://121.40.69.199:8000/media/'+typePicUrl
+		CONCAT('http://121.40.69.199:8000/media/',typePicUrl) as typePicUrl
 	</sql>
 
 	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
