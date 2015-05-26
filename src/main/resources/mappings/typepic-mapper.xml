@@ -27,8 +27,13 @@
 	<!--resultType="WxAccType" 每返回一条结果封装到WxAccType里 -->
 	<select id="queryAll" resultType="TypePic" parameterType="TypePic">
 		select
-		<include refid="selectId" />
+		<include refid="selectPicUrlId" />
 		from typepic
+		<where>
+			<if test="wxAccTypeId != null and wxAccTypeId != ''">
+				wxAccTypeId=#{wxAccTypeId}
+			</if>
+		</where>
 	</select>
 	
 	<select id="query" resultType="TypePic" parameterType="java.util.HashMap">
